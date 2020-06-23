@@ -18,6 +18,7 @@ int main(void)
     int pid = fork();
     if (pid == 0)
     {
+      signal(SIGINT, NULL);
       execlp(command, command, NULL);
     }
     else
