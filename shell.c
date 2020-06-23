@@ -10,10 +10,12 @@ int main(void);
 int main(void)
 {
   signal(SIGINT, SIG_IGN);
+  char command[255];
+  char pwd[255];
   while (1)
   {
-    char command[255];
-    printf("my-shell $ ");
+    getcwd(pwd, sizeof(pwd));
+    printf("%s $ ", pwd);
     gets(command);
     int pid = fork();
     if (pid == 0)
