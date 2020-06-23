@@ -4,10 +4,12 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 
 int main(void);
 int main(void)
 {
+  signal(SIGINT, SIG_IGN);
   while (1)
   {
     char command[255];
