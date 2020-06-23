@@ -16,7 +16,15 @@ int main(void)
     int pid = fork();
     if (pid == 0)
     {
-      execl("/bin/echo", "/bin/echo", "hello world", NULL);
+      if (strcmp(command, "ls") == 0)
+      {
+        execl("/bin/ls", "/bin/ls", NULL);
+      }
+      else
+      {
+        printf("Command not found\n");
+        exit(-1);
+      }
     }
     else
     {
@@ -26,3 +34,9 @@ int main(void)
 
   return 0;
 }
+
+// do i know about the command
+// parse the arguments
+// variable interpolation
+// set any environment variable
+// parse language if it allows
