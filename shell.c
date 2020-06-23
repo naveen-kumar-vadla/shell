@@ -16,15 +16,7 @@ int main(void)
     int pid = fork();
     if (pid == 0)
     {
-      if (strcmp(command, "ls") == 0)
-      {
-        execl("/bin/ls", "/bin/ls", NULL);
-      }
-      else
-      {
-        printf("Command not found\n");
-        exit(-1);
-      }
+      execlp(command, command, NULL);
     }
     else
     {
