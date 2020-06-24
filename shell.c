@@ -6,6 +6,32 @@
 #include <string.h>
 #include <signal.h>
 
+#define CYAN "\x1B[36m"
+#define RESET "\x1B[0m"
+#define RED "\x1B[31m"
+#define GREEN "\x1B[32m"
+
+void executeCommand(char *command);
+void executeCommand(char *command)
+{
+  int pid = fork();
+  int status = 0;
+  if (pid == 0)
+  {
+    signal(SIGINT, NULL);
+    status = execlp(command, command, NULL);
+  }
+  else
+  {
+    wait(&pid);
+  }
+  if (status == -1)
+  {
+    printf(RED "\nCommand Not Found\n" RESET);
+    exit(0);
+  }
+}
+
 int main(void);
 int main(void)
 {
@@ -15,17 +41,16 @@ int main(void)
   while (1)
   {
     getcwd(pwd, sizeof(pwd));
-    printf("%s $ ", pwd);
+    printf(CYAN "%s " RESET, pwd);
+    printf(GREEN "$ " RESET);
     gets(command);
-    int pid = fork();
-    if (pid == 0)
+    if (strcmp(command, "exit") == 0)
     {
-      signal(SIGINT, NULL);
-      execlp(command, command, NULL);
+      exit(0);
     }
     else
     {
-      wait(&pid);
+      executeCommand(command);
     }
   }
 
