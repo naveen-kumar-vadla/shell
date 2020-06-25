@@ -12,8 +12,8 @@
 #define RED "\x1B[31m"
 #define GREEN "\x1B[32m"
 
-int is_handled(char *command, char **argv);
-int is_handled(char *command, char **argv)
+int is_handled(char *command, char **argv, int *exit_code);
+int is_handled(char *command, char **argv, int *exit_code)
 {
   if (strcmp(*argv, "exit") == 0)
   {
@@ -21,17 +21,17 @@ int is_handled(char *command, char **argv)
   }
   else if (strcmp(*argv, "cd") == 0 || strcmp(*argv, "chdir") == 0)
   {
-    chdir(argv[1]);
+    *exit_code = chdir(argv[1]);
     return 1;
   }
   return 0;
 }
 
-void executeCommand(char *command);
-void executeCommand(char *command)
+void executeCommand(char *command, int *exit_code);
+void executeCommand(char *command, int *exit_code)
 {
   char **argv = split(command, ' ');
-  if (is_handled(command, argv))
+  if (is_handled(command, argv, exit_code))
   {
     return;
   }
@@ -42,12 +42,12 @@ void executeCommand(char *command)
     if (execvp(*argv, argv) == -1)
     {
       printf("zsh: command not found: %s\n", *argv);
-      exit(0);
+      exit(127);
     }
   }
   else
   {
-    wait(&pid);
+    waitpid(pid, exit_code, 0);
   }
 }
 
@@ -57,13 +57,15 @@ int main(void)
   signal(SIGINT, SIG_IGN);
   char command[255];
   char pwd[255];
+  int exit_code = 0;
   while (1)
   {
     getcwd(pwd, sizeof(pwd));
     printf(CYAN "%s " RESET, pwd);
-    printf(GREEN "$ " RESET);
+    printf(exit_code ? RED : GREEN);
+    printf("$ " RESET);
     gets(command);
-    executeCommand(command);
+    executeCommand(command, &exit_code);
   }
 
   return 0;
