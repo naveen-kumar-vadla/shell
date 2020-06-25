@@ -22,6 +22,10 @@ int is_handled(char *command, char **argv, int *exit_code)
   else if (strcmp(*argv, "cd") == 0 || strcmp(*argv, "chdir") == 0)
   {
     *exit_code = chdir(argv[1]);
+    if (*exit_code == -1)
+    {
+      printf("cd: no such file or directory: %s\n", argv[1]);
+    }
     return 1;
   }
   return 0;
@@ -44,6 +48,11 @@ void executeCommand(char *command, int *exit_code)
       printf("zsh: command not found: %s\n", *argv);
       exit(127);
     }
+  }
+  else if (pid == -1)
+  {
+    printf("\nFailed forking child..");
+    return;
   }
   else
   {
