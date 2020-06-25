@@ -1,5 +1,5 @@
-#ifndef __SPLIT_H_
-#define __SPLIT_H_
+#ifndef __STRING_UTILS_H_
+#define __STRING_UTILS_H_
 
 #define FOR_EACH(startAt, endAt) for (int i = startAt; i < endAt; i++)
 

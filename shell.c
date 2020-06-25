@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
-#include "split.h"
+#include "string_utils.h"
 
 #define CYAN "\x1B[36m"
 #define RESET "\x1B[0m"
@@ -45,7 +45,7 @@ void executeCommand(char *command, int *exit_code)
     signal(SIGINT, NULL);
     if (execvp(*argv, argv) == -1)
     {
-      printf("zsh: command not found: %s\n", *argv);
+      printf("sh: command not found: %s\n", *argv);
       exit(127);
     }
   }

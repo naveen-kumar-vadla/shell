@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "split.h"
+#include "string_utils.h"
 
 int get_count_of_words(char *string, char splitBy)
 {
