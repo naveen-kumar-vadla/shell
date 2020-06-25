@@ -5,30 +5,49 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include "split.h"
 
 #define CYAN "\x1B[36m"
 #define RESET "\x1B[0m"
 #define RED "\x1B[31m"
 #define GREEN "\x1B[32m"
 
+int is_handled(char *command, char **argv);
+int is_handled(char *command, char **argv)
+{
+  if (strcmp(*argv, "exit") == 0)
+  {
+    exit(0);
+  }
+  else if (strcmp(*argv, "cd") == 0 || strcmp(*argv, "chdir") == 0)
+  {
+    chdir(argv[1]);
+    return 1;
+  }
+  return 0;
+}
+
 void executeCommand(char *command);
 void executeCommand(char *command)
 {
+  char **argv = split(command, ' ');
+  if (is_handled(command, argv))
+  {
+    return;
+  }
   int pid = fork();
-  int status = 0;
   if (pid == 0)
   {
     signal(SIGINT, NULL);
-    status = execlp(command, command, NULL);
+    if (execvp(*argv, argv) == -1)
+    {
+      printf("zsh: command not found: %s\n", *argv);
+      exit(0);
+    }
   }
   else
   {
     wait(&pid);
-  }
-  if (status == -1)
-  {
-    printf(RED "\nCommand Not Found\n" RESET);
-    exit(0);
   }
 }
 
@@ -44,14 +63,7 @@ int main(void)
     printf(CYAN "%s " RESET, pwd);
     printf(GREEN "$ " RESET);
     gets(command);
-    if (strcmp(command, "exit") == 0)
-    {
-      exit(0);
-    }
-    else
-    {
-      executeCommand(command);
-    }
+    executeCommand(command);
   }
 
   return 0;
