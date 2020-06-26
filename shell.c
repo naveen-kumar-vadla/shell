@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include "alias.h"
 #include "string_utils.h"
 
 #define CYAN "\x1B[36m"
@@ -12,8 +13,22 @@
 #define RED "\x1B[31m"
 #define GREEN "\x1B[32m"
 
-int is_handled(char *command, char **args, int *exit_code);
-int is_handled(char *command, char **args, int *exit_code)
+void display_chdir_errors(int *exit_code, char_ptr *args);
+void display_chdir_errors(int *exit_code, char_ptr *args)
+{
+  if (*exit_code == -1)
+  {
+    char_ptr message = "no such file or directory";
+    if (includes(args[1], '.'))
+    {
+      message = "not a directory";
+    }
+    printf("cd: %s: %s\n", message, args[1]);
+  }
+}
+
+int is_handled(char_ptr command, List_ptr aliases, char_ptr *args, int *exit_code);
+int is_handled(char_ptr command, List_ptr aliases, char_ptr *args, int *exit_code)
 {
   if (strcmp(*args, "exit") == 0)
   {
@@ -22,25 +37,25 @@ int is_handled(char *command, char **args, int *exit_code)
   if (strcmp(*args, "cd") == 0 || strcmp(*args, "chdir") == 0)
   {
     *exit_code = chdir(args[1]);
-    if (*exit_code == -1)
-    {
-      char *message = "no such file or directory";
-      if (includes(args[1], '.'))
-      {
-        message = "not a directory";
-      }
-      printf("cd: %s: %s\n", message, args[1]);
-    }
+    display_chdir_errors(exit_code, args);
+    return 1;
+  }
+  if (strcmp(*args, "alias") == 0)
+  {
+    handle_alias(args, aliases);
+    *exit_code = 0;
     return 1;
   }
   return 0;
 }
 
-void executeCommand(char *command, int *exit_code);
-void executeCommand(char *command, int *exit_code)
+void executeCommand(char_ptr command, List_ptr aliases, int *exit_code);
+void executeCommand(char_ptr command, List_ptr aliases, int *exit_code)
 {
-  char **args = split(command, ' ');
-  if (is_handled(command, args, exit_code))
+  char_ptr *args = split(command, ' ');
+  char_ptr actual = get_actual(aliases, args[0]);
+  args[0] = actual;
+  if (is_handled(command, aliases, args, exit_code))
   {
     return;
   }
@@ -72,6 +87,7 @@ int main(void)
   char command[255];
   char pwd[255];
   int exit_code = 0;
+  List_ptr aliases = create_list();
   while (1)
   {
     getcwd(pwd, sizeof(pwd));
@@ -79,7 +95,7 @@ int main(void)
     printf(exit_code ? RED : GREEN);
     printf("$ " RESET);
     gets(command);
-    executeCommand(command, &exit_code);
+    executeCommand(command, aliases, &exit_code);
   }
 
   return 0;
