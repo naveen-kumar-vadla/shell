@@ -46,3 +46,16 @@ String *split(char *string, char splitBy)
   int wordCount = get_count_of_words(string, splitBy);
   return split_string(string, splitBy, wordCount + 1);
 }
+
+BOOL includes(char *text, char delimiter)
+{
+  BOOL is_found = FALSE;
+  for (int i = 0; i < strlen(text); i++)
+  {
+    if (text[i] == delimiter)
+    {
+      is_found = TRUE;
+    }
+  }
+  return is_found;
+}

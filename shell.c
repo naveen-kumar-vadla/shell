@@ -24,7 +24,12 @@ int is_handled(char *command, char **argv, int *exit_code)
     *exit_code = chdir(argv[1]);
     if (*exit_code == -1)
     {
-      printf("cd: no such file or directory: %s\n", argv[1]);
+      char *message = "no such file or directory";
+      if (includes(argv[1], '.'))
+      {
+        message = "not a directory";
+      }
+      printf("cd: %s: %s\n", message, argv[1]);
     }
     return 1;
   }
