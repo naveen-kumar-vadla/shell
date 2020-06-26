@@ -12,24 +12,24 @@
 #define RED "\x1B[31m"
 #define GREEN "\x1B[32m"
 
-int is_handled(char *command, char **argv, int *exit_code);
-int is_handled(char *command, char **argv, int *exit_code)
+int is_handled(char *command, char **args, int *exit_code);
+int is_handled(char *command, char **args, int *exit_code)
 {
-  if (strcmp(*argv, "exit") == 0)
+  if (strcmp(*args, "exit") == 0)
   {
     exit(0);
   }
-  else if (strcmp(*argv, "cd") == 0 || strcmp(*argv, "chdir") == 0)
+  if (strcmp(*args, "cd") == 0 || strcmp(*args, "chdir") == 0)
   {
-    *exit_code = chdir(argv[1]);
+    *exit_code = chdir(args[1]);
     if (*exit_code == -1)
     {
       char *message = "no such file or directory";
-      if (includes(argv[1], '.'))
+      if (includes(args[1], '.'))
       {
         message = "not a directory";
       }
-      printf("cd: %s: %s\n", message, argv[1]);
+      printf("cd: %s: %s\n", message, args[1]);
     }
     return 1;
   }
@@ -39,8 +39,8 @@ int is_handled(char *command, char **argv, int *exit_code)
 void executeCommand(char *command, int *exit_code);
 void executeCommand(char *command, int *exit_code)
 {
-  char **argv = split(command, ' ');
-  if (is_handled(command, argv, exit_code))
+  char **args = split(command, ' ');
+  if (is_handled(command, args, exit_code))
   {
     return;
   }
@@ -48,9 +48,9 @@ void executeCommand(char *command, int *exit_code)
   if (pid == 0)
   {
     signal(SIGINT, NULL);
-    if (execvp(*argv, argv) == -1)
+    if (execvp(*args, args) == -1)
     {
-      printf("sh: command not found: %s\n", *argv);
+      printf("sh: command not found: %s\n", *args);
       exit(127);
     }
   }
