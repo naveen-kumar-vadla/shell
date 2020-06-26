@@ -16,15 +16,15 @@ int get_count_of_words(char *string, char splitBy)
   return word_count;
 }
 
-void copy_string(String *destination_string, char *source_string, int length)
+void copy_string(char_ptr *destination_string, char *source_string, int length)
 {
   *destination_string = malloc(sizeof(char) * length);
   strncpy(*destination_string, source_string, length);
 }
 
-String *split_string(char *string, char splitBy, int word_count)
+char_ptr *split_string(char *string, char splitBy, int word_count)
 {
-  String *array_of_strings = malloc(sizeof(String) * word_count);
+  char_ptr *array_of_strings = malloc(sizeof(char_ptr) * word_count);
   int strings_count = 0;
   int pointer_to_string = 0;
   FOR_EACH(0, strlen(string))
@@ -41,7 +41,7 @@ String *split_string(char *string, char splitBy, int word_count)
   return array_of_strings;
 }
 
-String *split(char *string, char splitBy)
+char_ptr *split(char *string, char splitBy)
 {
   int wordCount = get_count_of_words(string, splitBy);
   return split_string(string, splitBy, wordCount + 1);

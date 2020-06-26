@@ -6,8 +6,6 @@
 #include <string.h>
 #include "string_utils.h"
 
-typedef char *char_ptr;
-
 typedef struct node
 {
   char_ptr key;

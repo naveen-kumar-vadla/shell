@@ -9,12 +9,12 @@ typedef enum
   TRUE
 } BOOL;
 
-typedef char *String;
+typedef char *char_ptr;
 
-String *split(char *string, char splitBy);
-String *split_string(char *string, char splitBy, int word_count);
+char_ptr *split(char *string, char splitBy);
+char_ptr *split_string(char *string, char splitBy, int word_count);
 int get_count_of_words(char *string, char splitBy);
-void copy_string(String *destination_string, char *source_string, int length);
+void copy_string(char_ptr *destination_string, char *source_string, int length);
 BOOL includes(char *text, char delimiter);
 
 #endif
