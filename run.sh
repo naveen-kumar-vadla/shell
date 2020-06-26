@@ -1,11 +1,10 @@
 #! /bin/bash
 
-directory=$1
-executable=`echo $directory | tr '/' '_'`_main.out
+executable=$1.out
 
 mkdir -p outputs
-rm -rf $directory/*.o
-gcc -c $directory/*.c
+rm -rf *.o
+gcc -c *.c
 gcc -o outputs/$executable *.o && outputs/$executable
 if [[ $? -ne 0 ]]; then
   rm -rf *.o
