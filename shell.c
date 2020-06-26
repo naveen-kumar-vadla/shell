@@ -7,6 +7,7 @@
 #include <signal.h>
 #include "alias.h"
 #include "string_utils.h"
+#include "variables.h"
 
 #define CYAN "\x1B[36m"
 #define RESET "\x1B[0m"
@@ -27,8 +28,8 @@ void display_chdir_errors(int *exit_code, char_ptr *args)
   }
 }
 
-int is_handled(char_ptr command, List_ptr aliases, char_ptr *args, int *exit_code);
-int is_handled(char_ptr command, List_ptr aliases, char_ptr *args, int *exit_code)
+int is_handled(char_ptr command, List_ptr aliases, List_ptr vars, char_ptr *args, int *exit_code);
+int is_handled(char_ptr command, List_ptr aliases, List_ptr vars, char_ptr *args, int *exit_code)
 {
   if (strcmp(*args, "exit") == 0)
   {
@@ -46,16 +47,22 @@ int is_handled(char_ptr command, List_ptr aliases, char_ptr *args, int *exit_cod
     *exit_code = 0;
     return 1;
   }
+  if (includes(*args, '='))
+  {
+    *exit_code = add_variable(vars, *args);
+    return 1;
+  }
   return 0;
 }
 
-void executeCommand(char_ptr command, List_ptr aliases, int *exit_code);
-void executeCommand(char_ptr command, List_ptr aliases, int *exit_code)
+void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code);
+void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code)
 {
   char_ptr *args = split(command, ' ');
+  interpolate_variables(args, vars);
   char_ptr actual = get_actual(aliases, args[0]);
   args[0] = actual;
-  if (is_handled(command, aliases, args, exit_code))
+  if (is_handled(command, aliases, vars, args, exit_code))
   {
     return;
   }
@@ -88,6 +95,7 @@ int main(void)
   char pwd[255];
   int exit_code = 0;
   List_ptr aliases = create_list();
+  List_ptr vars = create_list();
   while (1)
   {
     getcwd(pwd, sizeof(pwd));
@@ -95,7 +103,7 @@ int main(void)
     printf(exit_code ? RED : GREEN);
     printf("$ " RESET);
     gets(command);
-    executeCommand(command, aliases, &exit_code);
+    executeCommand(command, aliases, vars, &exit_code);
   }
 
   return 0;
