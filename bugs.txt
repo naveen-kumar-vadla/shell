@@ -1,0 +1,17 @@
+-- fixed --
+duplication of nodes
+if there is an alias/variable l=ls
+and if you again do alias/variable l='hello'
+it will create new key_value node in list
+then l=ls and l='hello' both will be there but if you ask you'll get only l=ls
+
+split command with quotes
+if you give a='hello everyone'
+it takes only 'hello' and ignore that 'everyone''
+if you give alias l='ls -l'
+it takes only ls and ignore that -l
+
+run command with quotes
+it won't run command with single quotes
+if you make an alias l='ls'
+and run l it will give error command not found 'ls'
