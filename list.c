@@ -17,40 +17,50 @@ Node_ptr create_node(char_ptr key, char_ptr value)
   return node;
 }
 
+Node_ptr get_node_of(List_ptr list, char_ptr key)
+{
+  Node_ptr p_walk = list->first;
+  Node_ptr matching_node = NULL;
+  BOOL is_found = FALSE;
+  while (p_walk != NULL && !is_found)
+  {
+    if (strcmp(p_walk->key, key) == 0)
+    {
+      matching_node = p_walk;
+      is_found = TRUE;
+    }
+    p_walk = p_walk->next;
+  }
+
+  return matching_node;
+}
+
 void add_to_list(List_ptr list, char_ptr key, char_ptr value)
 {
   Node_ptr new_node = create_node(key, value);
-  Node_ptr *ptr_to_set = &list->first;
   if (new_node == NULL)
   {
     return;
   }
+  Node_ptr matching_node = get_node_of(list, key);
+  if (matching_node)
+  {
+    (*matching_node) = (*new_node);
+    return;
+  }
+  Node_ptr *ptr_to_set = &list->first;
   if (list->first != NULL)
   {
     ptr_to_set = &list->last->next;
   }
   (*ptr_to_set) = new_node;
   list->last = new_node;
-  list->length++;
 }
 
 char_ptr get_value_of(List_ptr list, char_ptr key)
 {
-  Node_ptr p_walk = list->first;
-  char_ptr value = NULL;
-  BOOL is_found = FALSE;
-  while (p_walk != NULL && !is_found)
-  {
-    if (strcmp(p_walk->key, key) == 0)
-    {
-      value = malloc(sizeof(char) * strlen(p_walk->value));
-      value = p_walk->value;
-      is_found = TRUE;
-    }
-    p_walk = p_walk->next;
-  }
-
-  return value;
+  Node_ptr matching_node = get_node_of(list, key);
+  return matching_node ? matching_node->value : NULL;
 }
 
 void print_list(List_ptr list)
@@ -71,14 +81,6 @@ void print_matching_key(List_ptr list, char_ptr key)
     print_list(list);
     return;
   }
-  Node_ptr p_walk = list->first;
-  while (p_walk != NULL)
-  {
-    if (strcmp(p_walk->key, key) == 0)
-    {
-      printf("%s=%s ", p_walk->key, p_walk->value);
-    }
-    p_walk = p_walk->next;
-  }
-  printf("\n");
+  char_ptr value = get_value_of(list, key);
+  printf("%s=%s\n", key, value);
 }
