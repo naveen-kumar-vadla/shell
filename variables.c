@@ -9,9 +9,9 @@ int add_variable(List_ptr vars, char_ptr var)
 
 char_ptr get_variable_value(List_ptr vars, char_ptr key)
 {
-  char key_without_dollar[strlen(key)];
-  memcpy(key_without_dollar, key + 1, strlen(key));
-  char *value = get_value_of(vars, key_without_dollar);
+  char key_without_dollar[strlen(key) - 1];
+  memcpy(key_without_dollar, key + 1, strlen(key) - 1);
+  char_ptr value = get_value_of(vars, key_without_dollar);
   return value ? value : "";
 }
 

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "string_utils.h"
 
-int get_count_of_words(char *string, char splitBy)
+int get_count_of_words(char_ptr string, char splitBy)
 {
   int word_count = 1;
   FOR_EACH(0, strlen(string))
@@ -16,13 +16,13 @@ int get_count_of_words(char *string, char splitBy)
   return word_count;
 }
 
-void copy_string(char_ptr *destination_string, char *source_string, int length)
+void copy_string(char_ptr *destination_string, char_ptr source_string, int length)
 {
   *destination_string = malloc(sizeof(char) * length);
   strncpy(*destination_string, source_string, length);
 }
 
-char_ptr *split_string(char *string, char splitBy, int word_count)
+char_ptr *split_string(char_ptr string, char splitBy, int word_count)
 {
   char_ptr *array_of_strings = malloc(sizeof(char_ptr) * word_count);
   int strings_count = 0;
@@ -41,13 +41,13 @@ char_ptr *split_string(char *string, char splitBy, int word_count)
   return array_of_strings;
 }
 
-char_ptr *split(char *string, char splitBy)
+char_ptr *split(char_ptr string, char splitBy)
 {
   int wordCount = get_count_of_words(string, splitBy);
   return split_string(string, splitBy, wordCount + 1);
 }
 
-BOOL includes(char *text, char delimiter)
+BOOL includes(char_ptr text, char delimiter)
 {
   BOOL is_found = FALSE;
   for (int i = 0; i < strlen(text); i++)

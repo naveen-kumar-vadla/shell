@@ -11,10 +11,10 @@ typedef enum
 
 typedef char *char_ptr;
 
-char_ptr *split(char *string, char splitBy);
-char_ptr *split_string(char *string, char splitBy, int word_count);
-int get_count_of_words(char *string, char splitBy);
-void copy_string(char_ptr *destination_string, char *source_string, int length);
-BOOL includes(char *text, char delimiter);
+char_ptr *split(char_ptr string, char splitBy);
+char_ptr *split_string(char_ptr string, char splitBy, int word_count);
+int get_count_of_words(char_ptr string, char splitBy);
+void copy_string(char_ptr *destination_string, char_ptr source_string, int length);
+BOOL includes(char_ptr text, char delimiter);
 
 #endif

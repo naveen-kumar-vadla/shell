@@ -1,6 +1,3 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 #include "alias.h"
 
 void add_alias(List_ptr aliases, char_ptr alias)
@@ -19,8 +16,8 @@ void handle_alias(char_ptr *args, List_ptr aliases)
   print_matching_key(aliases, args[1]);
 }
 
-char_ptr get_actual(List_ptr aliases, char_ptr aka)
+char_ptr get_actual(List_ptr aliases, char_ptr key)
 {
-  char_ptr actual = get_value_of(aliases, aka);
-  return actual ? actual : aka;
+  char_ptr actual = get_value_of(aliases, key);
+  return actual ? actual : key;
 }
