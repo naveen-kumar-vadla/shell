@@ -18,7 +18,6 @@
 #define RED "\x1B[31m"
 #define GREEN "\x1B[32m"
 
-void display_chdir_errors(int *exit_code, char_ptr *args);
 int is_handled(char_ptr command, List_ptr aliases, List_ptr vars, char_ptr *args, int *exit_code);
 void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code);
 

@@ -1,28 +1,22 @@
 #include "shell.h"
 
-void display_chdir_errors(int *exit_code, char_ptr *args)
-{
-  if (*exit_code == -1)
-  {
-    char_ptr message = "no such file or directory";
-    if (includes(args[1], '.'))
-    {
-      message = "not a directory";
-    }
-    printf("cd: %s: %s\n", message, args[1]);
-  }
-}
-
 int is_handled(char_ptr command, List_ptr aliases, List_ptr vars, char_ptr *args, int *exit_code)
 {
   if (strcmp(*args, "exit") == 0)
   {
     exit(0);
   }
+  if (strcmp(*args, "") == 0)
+  {
+    return 1;
+  }
   if (strcmp(*args, "cd") == 0 || strcmp(*args, "chdir") == 0)
   {
     *exit_code = chdir(args[1]);
-    display_chdir_errors(exit_code, args);
+    if (*exit_code == -1)
+    {
+      perror("cd");
+    }
     return 1;
   }
   if (strcmp(*args, "alias") == 0)
