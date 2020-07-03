@@ -4,6 +4,7 @@ void add_alias(List_ptr aliases, char_ptr alias)
 {
   char_ptr *split_alias = split(alias, '=');
   add_to_list(aliases, split_alias[0], split_alias[1]);
+  store_List(aliases, "./bin/.aliases");
 }
 
 void handle_alias(char_ptr *args, List_ptr aliases)
@@ -20,4 +21,14 @@ char_ptr get_actual(List_ptr aliases, char_ptr key)
 {
   char_ptr actual = get_value_of(aliases, key);
   return actual ? actual : key;
+}
+
+void interpolate_aliases(char_ptr *args, List_ptr aliases)
+{
+  int i = 0;
+  while (args[i])
+  {
+    args[i] = get_actual(aliases, args[i]);
+    i++;
+  }
 }

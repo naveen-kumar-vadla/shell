@@ -2,6 +2,7 @@
 
 executable=$1.out
 
+mkdir -p bin
 mkdir -p outputs
 rm -rf *.o
 gcc -c *.c

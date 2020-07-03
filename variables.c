@@ -4,6 +4,7 @@ int add_variable(List_ptr vars, char_ptr var)
 {
   char_ptr *split_vars = split(var, '=');
   add_to_list(vars, split_vars[0], split_vars[1]);
+  store_List(vars, "./bin/.variables");
   return split_vars[2] ? 1 : 0;
 }
 

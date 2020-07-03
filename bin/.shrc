@@ -1,0 +1,12 @@
+alias cl=clear
+alias l=ls
+alias e=echo
+alias md=mkdir
+alias rd=rmdir
+alias t=tree
+alias ...=../..
+alias ....=../../..
+alias .....=../../../..
+alias ......=../../../../..
+a=hello
+b=everyone
