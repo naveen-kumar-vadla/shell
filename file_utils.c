@@ -10,7 +10,7 @@ void remove_newline_ch(char_ptr line)
 List_ptr load_aliases()
 {
   List_ptr aliases = create_list();
-  char command[255];
+  char command[MAX_SIZE];
   FILE *fptr = fopen("./bin/.aliases", "r");
   if (fptr == NULL)
     return aliases;
@@ -26,7 +26,7 @@ List_ptr load_aliases()
 List_ptr load_variables()
 {
   List_ptr variables = create_list();
-  char command[255];
+  char command[MAX_SIZE];
   FILE *fptr = fopen("./bin/.variables", "r");
   if (fptr == NULL)
     return variables;
@@ -55,7 +55,7 @@ void store_List(List_ptr list, char *filename)
 
 void load_sh_rc(List_ptr aliases, List_ptr vars, int *exit_code)
 {
-  char command[255];
+  char command[MAX_SIZE];
   FILE *fptr = fopen("./bin/.shrc", "r");
   if (fptr == NULL)
     return;

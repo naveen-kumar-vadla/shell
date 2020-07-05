@@ -66,8 +66,8 @@ void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit
 int main(void)
 {
   signal(SIGINT, SIG_IGN);
-  char command[255];
-  char pwd[255];
+  char command[MAX_SIZE];
+  char pwd[MAX_SIZE];
   int exit_code = 0;
   List_ptr aliases = load_aliases();
   List_ptr vars = load_variables();
