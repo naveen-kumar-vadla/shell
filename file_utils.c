@@ -96,6 +96,10 @@ int open_file_and_overwrite(char_ptr *args, int index, int fd)
 int handle_redirection(char_ptr *args)
 {
   int index = includes_array(args, '>');
+  if (index > 0 && strcmp(args[index], ">>") == 0)
+  {
+    return open_file_and_append(args, index, 1, O_WRONLY | O_CREAT | O_APPEND);
+  }
   if (index > 0)
   {
     return open_file_and_overwrite(args, index, 1);
