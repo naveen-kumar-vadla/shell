@@ -37,15 +37,15 @@ Node_ptr get_node_of(List_ptr list, char_ptr key)
 
 void add_to_list(List_ptr list, char_ptr key, char_ptr value)
 {
-  Node_ptr new_node = create_node(key, value);
-  if (new_node == NULL)
-  {
-    return;
-  }
   Node_ptr matching_node = get_node_of(list, key);
   if (matching_node)
   {
-    (*matching_node) = (*new_node);
+    matching_node->value = value;
+    return;
+  }
+  Node_ptr new_node = create_node(key, value);
+  if (new_node == NULL)
+  {
     return;
   }
   Node_ptr *ptr_to_set = &list->first;
