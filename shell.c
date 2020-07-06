@@ -33,7 +33,7 @@ int is_handled(char_ptr command, List_ptr aliases, List_ptr vars, char_ptr *args
   return 0;
 }
 
-void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code)
+void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code, int *pipes, int *fd_set)
 {
   char_ptr *args = split(command, ' ');
   interpolate_variables(args, vars);
@@ -46,6 +46,10 @@ void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit
   if (pid == 0)
   {
     signal(SIGINT, NULL);
+    fd_set[0] && close(pipes[0]);
+    fd_set[1] && dup2(pipes[1], 1);
+    fd_set[2] && close(pipes[1]);
+    fd_set[3] && dup2(pipes[0], 0);
     if (handle_redirection(args) == -1)
     {
       exit(1);
@@ -64,6 +68,29 @@ void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit
   }
 }
 
+void execute(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code)
+{
+  int pipes[2];
+  int fd_set[4] = {0, 0, 0, 0};
+  pipe(pipes);
+  if (!includes(command, '|'))
+  {
+    executeCommand(command, aliases, vars, exit_code, pipes, fd_set);
+    return;
+  }
+  char_ptr *pipeCommands = split(command, '|');
+  fd_set[0] = 1;
+  fd_set[1] = 1;
+  executeCommand(pipeCommands[0], aliases, vars, exit_code, pipes, fd_set);
+  close(pipes[1]);
+  fd_set[0] = 0;
+  fd_set[1] = 0;
+  fd_set[2] = 1;
+  fd_set[3] = 1;
+  executeCommand(pipeCommands[1], aliases, vars, exit_code, pipes, fd_set);
+  close(pipes[0]);
+}
+
 int main(void)
 {
   signal(SIGINT, SIG_IGN);
@@ -80,7 +107,7 @@ int main(void)
     printf(exit_code ? RED : GREEN);
     printf("$ " RESET);
     gets(command);
-    executeCommand(command, aliases, vars, &exit_code);
+    execute(command, aliases, vars, &exit_code);
   }
 
   return 0;

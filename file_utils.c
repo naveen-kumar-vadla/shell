@@ -62,7 +62,7 @@ void load_sh_rc(List_ptr aliases, List_ptr vars, int *exit_code)
   while (fgets(command, sizeof(command), fptr) != NULL)
   {
     remove_newline_ch(command);
-    executeCommand(command, aliases, vars, exit_code);
+    execute(command, aliases, vars, exit_code);
   }
   fclose(fptr);
 }
