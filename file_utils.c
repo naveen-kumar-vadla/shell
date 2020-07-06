@@ -100,6 +100,14 @@ int handle_redirection(char_ptr *args)
   {
     return open_file_and_append(args, index, 1, O_WRONLY | O_CREAT | O_APPEND);
   }
+  if (index > 0 && strcmp(args[index], "2>>") == 0)
+  {
+    return open_file_and_append(args, index, 2, O_WRONLY | O_CREAT | O_APPEND);
+  }
+  if (index > 0 && strcmp(args[index], "2>") == 0)
+  {
+    return open_file_and_overwrite(args, index, 2);
+  }
   if (index > 0)
   {
     return open_file_and_overwrite(args, index, 1);
