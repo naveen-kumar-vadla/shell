@@ -8,8 +8,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <fcntl.h>
 #include "alias.h"
-#include "string_utils.h"
+#include "utils.h"
 #include "variables.h"
 #include "file_utils.h"
 

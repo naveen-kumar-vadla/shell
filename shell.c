@@ -46,16 +46,17 @@ void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit
   if (pid == 0)
   {
     signal(SIGINT, NULL);
-    if (execvp(*args, args) == -1)
+    if (handle_redirection(args) == -1)
     {
-      printf("sh: command not found: %s\n", *args);
-      exit(127);
+      exit(1);
     }
+    execvp(*args, args);
+    printf("sh: command not found: %s\n", *args);
+    exit(127);
   }
   else if (pid == -1)
   {
-    printf("\nFailed forking child..");
-    return;
+    printf("\nFailed forking child..\n");
   }
   else
   {

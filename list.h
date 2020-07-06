@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "string_utils.h"
+#include "utils.h"
 
 typedef struct node
 {

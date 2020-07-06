@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include "string_utils.h"
+#include "utils.h"
 
 int get_count_of_words(char_ptr string, char splitBy)
 {
@@ -58,4 +55,22 @@ BOOL includes(char_ptr text, char delimiter)
     }
   }
   return is_found;
+}
+
+BOOL includes_array(char_ptr *text, char delimiter)
+{
+  BOOL is_found = FALSE;
+  int index = -1;
+  int i = 0;
+  while (!is_found && (text[i]))
+  {
+    is_found = includes(text[i], delimiter);
+    if (is_found)
+    {
+      index = i;
+    }
+    i++;
+  }
+
+  return index;
 }
