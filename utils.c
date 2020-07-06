@@ -57,6 +57,28 @@ BOOL includes(char_ptr text, char delimiter)
   return is_found;
 }
 
+char_ptr ltrim(char_ptr string)
+{
+  while (isspace(*string))
+    string++;
+  return string;
+}
+
+char_ptr rtrim(char_ptr string)
+{
+  int i;
+  for (i = strlen(string) - 1; (isspace(string[i])); i--)
+  {
+  }
+  string[i + 1] = '\0';
+  return string;
+}
+
+char_ptr trim(char_ptr string)
+{
+  return rtrim(ltrim(string));
+}
+
 BOOL includes_array(char_ptr *text, char delimiter)
 {
   BOOL is_found = FALSE;

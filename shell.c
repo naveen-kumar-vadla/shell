@@ -35,6 +35,7 @@ int is_handled(char_ptr command, List_ptr aliases, List_ptr vars, char_ptr *args
 
 void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code, int *pipes, int *fd_set)
 {
+  command = trim(command);
   char_ptr *args = split(command, ' ');
   interpolate_variables(args, vars);
   interpolate_aliases(args, aliases);
