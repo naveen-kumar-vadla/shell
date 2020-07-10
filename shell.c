@@ -54,12 +54,14 @@ void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit
       exit(1);
     }
     execvp(*args, args);
-    printf("sh: command not found: %s\n", *args);
+    char_ptr error_message = "sh: command not found: %s\n";
+    write(2, error_message, strlen(error_message));
     exit(127);
   }
   else if (pid == -1)
   {
-    printf("\nFailed forking child..\n");
+    char_ptr error_message = "Failed forking child..\n";
+    write(2, error_message, strlen(error_message));
   }
   else
   {
