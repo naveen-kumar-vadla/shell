@@ -67,17 +67,9 @@ void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit
   }
 }
 
-void execute(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code)
+void handle_piping(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code, int pipes_count, int *pipes, int *fd_set)
 {
-  int fd_set[] = {0, 0};
-  int pipes_count = get_count_of_words(command, '|');
-  int pipes[2 * (pipes_count - 1)];
-  if (!includes(command, '|'))
-  {
-    executeCommand(command, aliases, vars, exit_code, pipes[0], pipes[1], fd_set);
-    return;
-  }
-  for (int i = 0; i < sizeof(pipes) / sizeof(int); i += 2)
+  for (int i = 0; i < 2 * (pipes_count - 1); i += 2)
   {
     pipe(pipes + i);
   }
@@ -103,6 +95,19 @@ void execute(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code)
   fd_set[1] = 0;
   executeCommand(pipeCommands[pipes_count - 1], aliases, vars, exit_code, pipes[read_fd_pos], 1, fd_set);
   close(pipes[read_fd_pos]);
+}
+
+void execute(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code)
+{
+  int fd_set[] = {0, 0};
+  int pipes_count = get_count_of_words(command, '|');
+  int pipes[2 * (pipes_count - 1)];
+  if (includes(command, '|'))
+  {
+    handle_piping(command, aliases, vars, exit_code, pipes_count, pipes, fd_set);
+    return;
+  }
+  executeCommand(command, aliases, vars, exit_code, pipes[0], pipes[1], fd_set);
 }
 
 int main(void)

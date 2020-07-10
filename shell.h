@@ -24,5 +24,6 @@
 int is_handled(char_ptr command, List_ptr aliases, List_ptr vars, char_ptr *args, int *exit_code);
 void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code, int read_fd, int write_fd, int *fd_set);
 void execute(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code);
+void handle_piping(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code, int pipes_count, int *pipes, int *fd_set);
 
 #endif
