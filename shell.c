@@ -47,10 +47,8 @@ void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit
   if (pid == 0)
   {
     signal(SIGINT, NULL);
-    fd_set[0] && close(read_fd);
-    fd_set[0] && dup2(write_fd, 1);
-    fd_set[1] && close(write_fd);
-    fd_set[1] && dup2(read_fd, 0);
+    fd_set[0] && dup2(read_fd, 0);
+    fd_set[1] && dup2(write_fd, 1);
     if (handle_redirection(args) == -1)
     {
       exit(1);
@@ -71,22 +69,40 @@ void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit
 
 void execute(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code)
 {
-  int pipes[2];
   int fd_set[] = {0, 0};
-  pipe(pipes);
+  int pipes_count = get_count_of_words(command, '|');
+  int pipes[2 * (pipes_count - 1)];
   if (!includes(command, '|'))
   {
     executeCommand(command, aliases, vars, exit_code, pipes[0], pipes[1], fd_set);
     return;
   }
+  for (int i = 0; i < sizeof(pipes) / sizeof(int); i += 2)
+  {
+    pipe(pipes + i);
+  }
+
   char_ptr *pipeCommands = split(command, '|');
-  fd_set[0] = 1;
-  executeCommand(pipeCommands[0], aliases, vars, exit_code, pipes[0], pipes[1], fd_set);
-  close(pipes[1]);
-  fd_set[0] = 0;
+  int read_fd_pos = 0;
+  int write_fd_pos = 3;
+
   fd_set[1] = 1;
-  executeCommand(pipeCommands[1], aliases, vars, exit_code, pipes[0], pipes[1], fd_set);
-  close(pipes[0]);
+  executeCommand(pipeCommands[0], aliases, vars, exit_code, 0, pipes[1], fd_set);
+  close(pipes[1]);
+  for (int i = 1; i < pipes_count - 1; i++)
+  {
+    fd_set[0] = 1;
+    fd_set[1] = 1;
+    executeCommand(pipeCommands[i], aliases, vars, exit_code, pipes[read_fd_pos], pipes[write_fd_pos], fd_set);
+    close(pipes[read_fd_pos]);
+    close(pipes[write_fd_pos]);
+    read_fd_pos += 2;
+    write_fd_pos += 2;
+  }
+  fd_set[0] = 1;
+  fd_set[1] = 0;
+  executeCommand(pipeCommands[pipes_count - 1], aliases, vars, exit_code, pipes[read_fd_pos], 1, fd_set);
+  close(pipes[read_fd_pos]);
 }
 
 int main(void)
