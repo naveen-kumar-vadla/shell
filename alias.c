@@ -25,10 +25,5 @@ char_ptr get_actual(List_ptr aliases, char_ptr key)
 
 void interpolate_aliases(char_ptr *args, List_ptr aliases)
 {
-  int i = 0;
-  while (args[i])
-  {
-    args[i] = get_actual(aliases, args[i]);
-    i++;
-  }
+  args[0] = get_actual(aliases, args[0]);
 }

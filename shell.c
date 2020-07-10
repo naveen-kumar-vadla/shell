@@ -1,5 +1,6 @@
 #include "shell.h"
 
+
 int is_handled(char_ptr command, List_ptr aliases, List_ptr vars, char_ptr *args, int *exit_code)
 {
   if (strcmp(*args, "exit") == 0)
@@ -54,7 +55,9 @@ void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit
       exit(1);
     }
     execvp(*args, args);
-    char_ptr error_message = "sh: command not found: %s\n";
+    char error_message[300] = "sh: command not found: ";
+    strcat(error_message, args[0]);
+    strcat(error_message, "\n");
     write(2, error_message, strlen(error_message));
     exit(127);
   }
