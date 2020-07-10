@@ -33,7 +33,7 @@ int is_handled(char_ptr command, List_ptr aliases, List_ptr vars, char_ptr *args
   return 0;
 }
 
-void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code, int *pipes, int *fd_set)
+void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code, int read_fd, int write_fd, int *fd_set)
 {
   command = trim(command);
   char_ptr *args = split(command, ' ');
@@ -47,10 +47,10 @@ void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit
   if (pid == 0)
   {
     signal(SIGINT, NULL);
-    fd_set[0] && close(pipes[0]);
-    fd_set[1] && dup2(pipes[1], 1);
-    fd_set[2] && close(pipes[1]);
-    fd_set[3] && dup2(pipes[0], 0);
+    fd_set[0] && close(read_fd);
+    fd_set[0] && dup2(write_fd, 1);
+    fd_set[1] && close(write_fd);
+    fd_set[1] && dup2(read_fd, 0);
     if (handle_redirection(args) == -1)
     {
       exit(1);
@@ -72,23 +72,20 @@ void executeCommand(char_ptr command, List_ptr aliases, List_ptr vars, int *exit
 void execute(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code)
 {
   int pipes[2];
-  int fd_set[4] = {0, 0, 0, 0};
+  int fd_set[] = {0, 0};
   pipe(pipes);
   if (!includes(command, '|'))
   {
-    executeCommand(command, aliases, vars, exit_code, pipes, fd_set);
+    executeCommand(command, aliases, vars, exit_code, pipes[0], pipes[1], fd_set);
     return;
   }
   char_ptr *pipeCommands = split(command, '|');
   fd_set[0] = 1;
-  fd_set[1] = 1;
-  executeCommand(pipeCommands[0], aliases, vars, exit_code, pipes, fd_set);
+  executeCommand(pipeCommands[0], aliases, vars, exit_code, pipes[0], pipes[1], fd_set);
   close(pipes[1]);
   fd_set[0] = 0;
-  fd_set[1] = 0;
-  fd_set[2] = 1;
-  fd_set[3] = 1;
-  executeCommand(pipeCommands[1], aliases, vars, exit_code, pipes, fd_set);
+  fd_set[1] = 1;
+  executeCommand(pipeCommands[1], aliases, vars, exit_code, pipes[0], pipes[1], fd_set);
   close(pipes[0]);
 }
 
