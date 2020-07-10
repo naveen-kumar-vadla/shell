@@ -1,2 +1,0 @@
-sh: command not found: %s
-
