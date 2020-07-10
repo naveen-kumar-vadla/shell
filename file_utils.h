@@ -12,5 +12,6 @@ void load_sh_rc(List_ptr aliases, List_ptr vars, int *exit_code);
 int open_file_and_append(char_ptr *args, int index, int fd, mode_t mode);
 int open_file_and_overwrite(char_ptr *args, int index, int fd);
 int handle_redirection(char_ptr *args);
+void handle_piping(char_ptr command, List_ptr aliases, List_ptr vars, int *exit_code, int pipes_count, int *pipes, int *fd_set);
 
 #endif
